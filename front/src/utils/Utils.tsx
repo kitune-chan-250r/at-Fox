@@ -53,7 +53,11 @@ export const sendFeedLike = async(
     const agent = await new BskyAgent({ service: service });
     agent.resumeSession(sessionData);
 
-    const res = await agent.like(uri, cid);
+    try {
+        const res = await agent.like(uri, cid);
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 /**
@@ -68,8 +72,50 @@ export const deleteFeedLike = async(
     const agent = await new BskyAgent({ service: service });
     agent.resumeSession(sessionData);
 
-    const res = await agent.deleteLike(viewerLikeAt);
-    console.info(res);
+    try {
+        const res = await agent.deleteLike(viewerLikeAt);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+/**
+ * 指定したfeedをrepostする
+ * @returns 
+ */
+export const sendFeedRepost = async(
+    service: string,
+    sessionData: AtpSessionData,
+    uri: string,
+    cid: string
+) => {
+    const agent = await new BskyAgent({ service: service });
+    agent.resumeSession(sessionData);
+
+    try {
+        const res = await agent.repost(uri, cid);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+/**
+ * 指定したfeedのrepostを外す
+ * @returns 
+ */
+export const deleteFeedRepost = async(
+    service: string,
+    sessionData: AtpSessionData,
+    viewerLikeAt: string,
+) => {
+    const agent = await new BskyAgent({ service: service });
+    agent.resumeSession(sessionData);
+
+    try {
+        const res = await agent.deleteRepost(viewerLikeAt);
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 /**
@@ -84,7 +130,7 @@ export const getFeed = async(
 ) => {
     const agent = await new BskyAgent({ service: service});
     agent.resumeSession(sessionData);
-    const res = await agent.getPostThread({uri: uri}) as AppBskyFeedGetPostThread.Response;
 
+    const res = await agent.getPostThread({uri: uri}) as AppBskyFeedGetPostThread.Response;
     return res;
 }

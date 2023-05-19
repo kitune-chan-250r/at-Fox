@@ -32,7 +32,7 @@ interface Props {
 export const Timeline = (props: Props) => {
     const [cookies, setCookie, removeCookie] = useCookies();
     const [agent, setAgent] = useState({} as BskyAgent);
-    const [queryParams, setQueryParams] = useState({ limit: 60 } as QueryParams);
+    const [queryParams, setQueryParams] = useState({ limit: 50 } as QueryParams);
     const [feeds, setFeeds] = useState([] as FeedViewPost[]);
     const [isInit, setInit] = useState(false);
     const navigate = useNavigate();

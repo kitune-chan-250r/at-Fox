@@ -16,6 +16,9 @@
  *  スタンプ一覧の取得
  *  スタンプID指定でスタンプ画像の提供
  * 
+ * 主な課題
+ * 現状、通信料が多い。agentの状態の持ち方を工夫する必要あり
+ * 
  */
 
 import { Fragment, useEffect, useState } from "react";

@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { useCookies } from "react-cookie";
 import { SessionData } from "../types/SessionData";
-import { checkSessionData, deleteFeedLike, getFeed, sendFeedLike } from "../utils/Utils";
+import { checkSessionData, deleteFeedLike, deleteFeedRepost, getFeed, sendFeedLike, sendFeedRepost } from "../utils/Utils";
 import { useNavigate } from "react-router-dom";
 import { Avatar, Box, Grid, IconButton, Stack } from "@mui/material";
 import { makeStyles } from '@mui/styles';
@@ -82,11 +82,13 @@ interface Props {
 export const Feed = ({index, feed, updateIndexFeed}: Props) => {
     const [cookies, setCookie, removeCookie] = useCookies();
     const [isLiked, setLiked] = useState(false);
+    const [isReposted, setReposted] = useState(false);
     const navigate = useNavigate();
     const classes = useStyles();
 
     useEffect(() => {
         feed.post.viewer?.like ? setLiked(true) : setLiked(false);
+        feed.post.viewer?.repost ? setReposted(true) : setReposted(false);
     }, []);
 
 
@@ -107,6 +109,17 @@ export const Feed = ({index, feed, updateIndexFeed}: Props) => {
             console.info('send like');
             await sendFeedLike(cookies?.service, cookies?.sessionData, feed.post.uri, feed.post.cid);
         } 
+
+        updateIndexFeed(index, feed);
+    }
+
+    const handleClickFeedRepost = async() => {
+        setReposted(!isReposted);
+        if (isReposted) {
+            await deleteFeedRepost(cookies?.service, cookies?.sessionData, feed.post.viewer?.repost as string);
+        } else {
+            await sendFeedRepost(cookies?.service, cookies?.sessionData, feed.post.uri, feed.post.cid);
+        }
 
         updateIndexFeed(index, feed);
     }
@@ -164,10 +177,12 @@ export const Feed = ({index, feed, updateIndexFeed}: Props) => {
                                     </div>
                                 </Grid>
                                 <Grid item xs={3}>
-                                    <div>
+                                    <div onClick={handleClickFeedRepost}>
                                         <Stack className={classes.utilArea} direction={'row'} spacing={1}>
-                                            <RepeatIcon />
-                                            <a className={classes.iconText}>{feed.post?.repostCount}</a>
+                                            { isReposted ? <RepeatIcon htmlColor="green" /> : <RepeatIcon /> }
+                                            <a className={classes.iconText}>
+                                                { isReposted && !feed.post.viewer?.repost ? (feed.post?.repostCount as number) + 1 : feed.post?.repostCount}
+                                            </a>
                                         </Stack>
                                     </div>
                                 </Grid>
@@ -195,7 +210,7 @@ export const Feed = ({index, feed, updateIndexFeed}: Props) => {
                 </Stack>
             </Box>
         )
-    }, [feed, isLiked]);
+    }, [feed, isLiked, isReposted]);
 
     return(
         <Fragment>
