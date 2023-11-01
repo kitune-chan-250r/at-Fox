@@ -1,32 +1,9 @@
 import { BskyAgent, AtpSessionData, AppBskyFeedGetPostThread, AtpAgentOpts } from "@atproto/api";
 import { Response as TimelineResponse, QueryParams } from "@atproto/api/dist/client/types/app/bsky/feed/getTimeline"
+import { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 import { SessionData } from "../types/SessionData";
 import { XRPCResponse } from '@atproto/xrpc';
 import { useCookies } from "react-cookie";
-
-// const Utils = () => {
-//     // const [cookies, setCookie, removeCookie] = useCookies();
-//     const [cookies] = useCookies();
-
-//     export const checkSessionData = () => {
-
-//     }
-// }
-
-// export default Utils;
-
-// export const getTimeline = async(agent:queryParams: QueryParams): Promise<TimelineResponse> => {
-//     const result = {} as TimelineResponse;
-//     agent.getTimeline(queryParams)
-//         .then((res: TimelineResponse) => {
-//             return res;
-//         })
-//         .catch((e) => {
-//             console.error(e.error);
-//         });
-
-//     return result;
-// }
 
 /**
  * cookieを確認して有効なセッションデータが入っているか確認
@@ -40,97 +17,53 @@ export const checkSessionData = (sessionData: AtpSessionData):boolean => {
     return true;
 }
 
-/**
- * 指定したfeedにlikeを付ける
- * @returns 
- */
-export const sendFeedLike = async(
-    service: string,
-    sessionData: AtpSessionData,
-    uri: string,
-    cid: string
-) => {
-    const agent = await new BskyAgent({ service: service });
-    agent.resumeSession(sessionData);
 
-    try {
-        const res = await agent.like(uri, cid);
-    } catch (error) {
-        console.error(error);
+/**
+ * feedから指定したviewerの要素を取り除く
+ * @param feed 
+ * @param type 
+ * @returns FeedViewPost
+ */
+export const deleteFeedViewer = (
+    feed: FeedViewPost, 
+    type: 'like' | 'repost'
+): FeedViewPost => {
+    if (type === 'like' && feed.post.viewer && feed.post.likeCount) {
+        delete feed.post.viewer.like; // プロパティを削除
+        feed.post.likeCount -= 1;
+    } else if (type === 'repost' && feed.post.viewer && feed.post.repostCount) {
+        delete feed.post.viewer.repost;
+        feed.post.repostCount -= 1;
     }
+    return feed;
 }
 
 /**
- * 指定したfeedのlikeを外す
- * @returns 
+ * feedから指定したviewerの要素を追加する
+ * @param feed 
+ * @param type 
+ * @returns FeedViewPost
  */
-export const deleteFeedLike = async(
-    service: string,
-    sessionData: AtpSessionData,
-    viewerLikeAt: string,
-) => {
-    const agent = await new BskyAgent({ service: service });
-    agent.resumeSession(sessionData);
-
-    try {
-        const res = await agent.deleteLike(viewerLikeAt);
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-/**
- * 指定したfeedをrepostする
- * @returns 
- */
-export const sendFeedRepost = async(
-    service: string,
-    sessionData: AtpSessionData,
-    uri: string,
-    cid: string
-) => {
-    const agent = await new BskyAgent({ service: service });
-    agent.resumeSession(sessionData);
-
-    try {
-        const res = await agent.repost(uri, cid);
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-/**
- * 指定したfeedのrepostを外す
- * @returns 
- */
-export const deleteFeedRepost = async(
-    service: string,
-    sessionData: AtpSessionData,
-    viewerLikeAt: string,
-) => {
-    const agent = await new BskyAgent({ service: service });
-    agent.resumeSession(sessionData);
-
-    try {
-        const res = await agent.deleteRepost(viewerLikeAt);
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-/**
- * 指定したfeedを取得する(threadごと)
- * @returns 
- */
-export const getFeed = async(
-    service: string,
-    sessionData: AtpSessionData,
+export const addFeedViewer = (
+    feed: FeedViewPost, 
+    type: 'like' | 'repost',
     uri: string
-    // cid: string
-) => {
-    const agent = await new BskyAgent({ service: service});
-    agent.resumeSession(sessionData);
+): FeedViewPost => {
+    if (type === 'like' && feed.post.viewer && feed.post.likeCount) {
+        feed.post.viewer.like = uri;
+        feed.post.likeCount += 1;
+    } else if (type === 'repost' && feed.post.viewer && feed.post.repostCount) {
+        feed.post.viewer.repost = uri;
+        feed.post.repostCount += 1;
+    }
+    return feed;
+}
 
-    const res = await agent.getPostThread({uri: uri}) as AppBskyFeedGetPostThread.Response;
-    return res;
+/**
+ * 改行やスペース、タブを受け取った文字列から排除する
+ * @param text 改行やスペース、タブを消したい文字列
+ * @returns 改行やスペース、タブが消えた文字列
+ */
+export const deleteWhitespace = (text: string):string => {
+    return text.replace(/\s+/g, '');
 }

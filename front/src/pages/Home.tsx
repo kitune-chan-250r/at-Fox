@@ -4,14 +4,18 @@ import { SessionData } from "../types/SessionData";
 import { checkSessionData } from "../utils/Utils";
 import { useNavigate } from "react-router-dom";
 import SideNavBar from "../components/SideNavBar";
-import { AtpSessionData, BskyAgent } from "@atproto/api";
+import { AtpSessionData, BskyAgent, ProfileRecord } from "@atproto/api";
+import { Response as ProfileResponse } from "@atproto/api/dist/client/types/app/bsky/actor/getProfile";
 import Timeline from "../components/Timeline";
-import { Grid } from "@mui/material";
+import { Grid, makeStyles } from "@mui/material";
+import BskyClient from "../utils/BskyClient";
+import PostFeed from "../components/PostFeed";
 // import { BskyAgent, AtpSessionEvent, AtpSessionData } from '@atproto/api';
-
 
 export const Home = () => {
     const [cookies, setCookie, removeCookie] = useCookies();
+    const [isInit, setIsInit] = useState(false);
+    const [myProfile, setMyProfile] = useState({} as ProfileResponse);
     const navigate = useNavigate();
     // const loginData = cookies.sessionData as AtpSessionData;
     // const service = cookies?.service;
@@ -31,7 +35,21 @@ export const Home = () => {
         } else {
             // agent = new BskyAgent({ service: service});
             // await agent.resumeSession(loginData);
+            const bskyClient = BskyClient.getInstance();
+            bskyClient.init(cookies?.service, cookies?.sessionData);
+            
+            // 自分のプロフィールは持っておく
+            const loginData = cookies?.sessionData as AtpSessionData;
+            bskyClient.getMyAvatar(loginData.handle)
+                .then(profile => {
+                    setMyProfile(profile);
+                })
+                .catch(e => {
+                    console.info(e);
+                });
         }
+
+        setIsInit(true);
     }
    
     return(
@@ -39,13 +57,21 @@ export const Home = () => {
         //     did: { loginData?.did }
         // </div>
         <SideNavBar 
+            myProfile={myProfile}
             middleMainContent={
-                // <div>
-                //     did: { loginData?.did }
-                // </div>
-                <Timeline />
+                <Timeline 
+                    myProfile={myProfile} 
+                    isInit={isInit} 
+                />
             }
+            // middleSubContent={
+            //     <PostFeed />
+            // }
         />
+        
+        // <Grid container alignItems="center" justifyContent="center" style={{ height: '100vh', backgroundColor: 'blue' , maxWidth: 600}}>
+        //     <Timeline isInit={isInit} />
+        // </Grid>
     )
 }
 

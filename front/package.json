@@ -65,6 +65,7 @@
     ]
   },
   "devDependencies": {
-    "@types/react-infinite-scroller": "^1.2.3"
+    "@types/react-infinite-scroller": "^1.2.3",
+    "ntp-client": "^0.5.3"
   }
 }

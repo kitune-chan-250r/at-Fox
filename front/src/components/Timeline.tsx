@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { useCookies } from "react-cookie";
 import { SessionData } from "../types/SessionData";
-import { checkSessionData, getFeed } from "../utils/Utils";
+import { checkSessionData } from "../utils/Utils";
 import { useNavigate } from "react-router-dom";
 import { Box, Grid } from "@mui/material";
 import { makeStyles } from '@mui/styles';
@@ -11,8 +11,11 @@ import { BskyAgent, AtpSessionData } from "@atproto/api";
 import { Response as TimelineResponse, QueryParams } from "@atproto/api/dist/client/types/app/bsky/feed/getTimeline"
 import { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 import { Record } from "@atproto/api/dist/client/types/app/bsky/feed/post";
+import { Response as ProfileResponse } from "@atproto/api/dist/client/types/app/bsky/actor/getProfile";
 import { Virtuoso } from "react-virtuoso";
 import Feed from "./Feed";
+import BskyClient from "../utils/BskyClient";
+import PostFeed from "./PostFeed";
 
 export enum FeedAlgorithm {
     ReverseChronological = 'reverse-chronological',
@@ -26,50 +29,33 @@ const useStyles = makeStyles({
 });
 
 interface Props {
-    // agent: BskyAgent;
+    isInit: boolean;
+    myProfile: ProfileResponse;
 }
 
-export const Timeline = (props: Props) => {
+export const Timeline = ({ isInit, myProfile }: Props) => {
     const [cookies, setCookie, removeCookie] = useCookies();
     const [agent, setAgent] = useState({} as BskyAgent);
     const [queryParams, setQueryParams] = useState({ limit: 50 } as QueryParams);
     const [feeds, setFeeds] = useState([] as FeedViewPost[]);
-    const [isInit, setInit] = useState(false);
+    const client = BskyClient.getInstance();
     const navigate = useNavigate();
     const classes = useStyles();
 
     useEffect(() => {
-        console.info(isInit);
-        if (!isInit) {
+        if (isInit) {
             getMyTimeline();
-            setInit(true);
         }
+    }, [isInit]);
 
-        // setFeeds([...feeds, ...[{} as FeedViewPost]]);
-    }, []);
-
+    // 初期取得時と下スクロールじに配列の最後にタイムラインを付け足す
     const getMyTimeline = async() => {
-        console.info('more read');
-        const service = cookies?.service;
-        if (service === undefined) return;
-        
-        let tempAgent = agent;
-
-        if (!tempAgent.session) {
-            const agent = await new BskyAgent({ service: service });
-            agent.resumeSession(cookies?.sessionData);
-            setAgent(agent);
-            tempAgent = agent;
-        }
-        // const agent = await new BskyAgent({ service: service });
-        // agent.resumeSession(cookies?.sessionData);
-
-        tempAgent.getTimeline(queryParams)
+        const res = await client.getTimeline(queryParams)
             .then((res: TimelineResponse) => {
                 // cursor 更新
                 queryParams.cursor = res.data.cursor;
                 queryParams.algorithm = FeedAlgorithm.ReverseChronological;
-                queryParams.limit = 30;
+                queryParams.limit = 50;
 
                 setFeeds([...feeds, ...res.data.feed]);
                 setQueryParams(queryParams);
@@ -77,48 +63,58 @@ export const Timeline = (props: Props) => {
             });
     }
     
+    // feedコンポーネント内から内容を更新する場合に使用
     const updateIndexFeed = async(index: number, feed: FeedViewPost) => {
-        console.info(':before:');
-        console.info(feeds[index]);
-
-        const res =  await getFeed(cookies?.service, cookies?.sessionData, feed.post.uri);
-        
-        console.info(':recive FeedVieewPost:');
-        console.info(res.data.thread);
+        console.info(':update feed in local:');
+        console.info(feed);
         const updatedFeeds = feeds;
-        updatedFeeds[index] = res.data.thread as FeedViewPost;
+        updatedFeeds[index] = feed;
 
         setFeeds([...updatedFeeds]);
+        
+        console.info(updatedFeeds[index])
     }
 
-    // const result = useMemo(async() => {
-    //     // return getMyTimeline();
-    //     console.info('more read');
-    //     const service = cookies?.service;
-    //     if (service === undefined) return;
+    // 最新を配列の先頭に付け足す
+    /**
+     * 現状の挙動として、
+     * refreshTimelineFeeds() => feeds配列を最新の50件に置き換え、元データ廃棄
+     * getMyTimeline() => queryParams.cursor を元にさかのぼって50件をfeeds配列の後ろに付け足し
+     * 
+     * 理想の挙動としては、
+     * refreshTimelineFeeds() => 現状のfeeds配列の先頭に最新データのみ追加、元データの廃棄は上限までしない
+     * getMyTimeline() => そのまま
+     */
+    const refreshTimelineFeeds = async() => {
+        const res = await client.getTimeline({ limit: 50 })
+            .then((res: TimelineResponse) => {
+                // cursor 更新
+                queryParams.cursor = res.data.cursor;
+                queryParams.algorithm = FeedAlgorithm.ReverseChronological;
+                queryParams.limit = 50;
 
-    //     const agent = await new BskyAgent({ service: service});
-    //     agent.resumeSession(cookies?.sessionData);
+                // setFeeds([...res.data.feed, ...feeds]);
+                setFeeds([...res.data.feed]);
+                setQueryParams(queryParams);
+                console.info(res);
+            });
+    }
 
-    //     queryParams.algorithm = FeedAlgorithm.ReverseChronological;
-    //     var response = await agent.getTimeline(queryParams) as TimelineResponse;
-    //     // cursor 更新
-    //     queryParams.cursor = response.data.cursor;
+    // 一定時間でこの関数を実行して指定したfeedsをまとめてアップデートする
+    const updateTimelineFeeds = async() => {
+        const res = await client.getTimeline({ limit: 50 })
+            .then((res: TimelineResponse) => {
+                // cursor 更新
+                queryParams.cursor = res.data.cursor;
+                queryParams.algorithm = FeedAlgorithm.ReverseChronological;
+                queryParams.limit = 50;
 
-    //     setFeeds([...feeds, ...response.data.feed]);
-    //     setQueryParams(queryParams);
-    //     console.info(response);
-    // }, []);
+                setFeeds([...feeds, ...res.data.feed]);
+                setQueryParams(queryParams);
+                console.info(res);
+            });
+    }
 
-    // const handleScroll = (event: any) => {
-    //     // console.info(event.currentTarget.scrollTop);
-    //     // 一番下までスクロールされたら
-    //     if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight) {
-    //         console.log("End");
-    //     }
-    // }
-
-   
     const loginData = cookies.sessionData as AtpSessionData;
 
     return(
@@ -126,6 +122,7 @@ export const Timeline = (props: Props) => {
             {/* <div>
                 {cookies?.sessionData.did}
             </div> */}
+            {/* <PostFeed myProfile={myProfile} /> */}
             <Virtuoso
                 className={classes.timeline}
                 totalCount={feeds.length}
@@ -136,6 +133,9 @@ export const Timeline = (props: Props) => {
                 reversed={true}
                 // overscan={200}
                 data={feeds}
+                components={{
+                    Header: () => <PostFeed myProfile={myProfile} refreshTimelineFeeds={refreshTimelineFeeds} />
+                }}
                 itemContent={
                     (index, data) => (
                     <Feed 

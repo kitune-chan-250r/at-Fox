@@ -1,33 +1,27 @@
-import { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import { useCookies } from "react-cookie";
 import { SessionData } from "../types/SessionData";
 import { checkSessionData } from "../utils/Utils";
 import { useNavigate } from "react-router-dom";
-import { Box, Grid } from "@mui/material";
+import { Box, Container, Grid, Hidden } from "@mui/material";
 import { makeStyles } from '@mui/styles';
 import { AtpSessionData } from "@atproto/api";
+import { Response as ProfileResponse } from "@atproto/api/dist/client/types/app/bsky/actor/getProfile";
 // import { BskyAgent, AtpSessionEvent, AtpSessionData } from '@atproto/api';
 
 const useStyles = makeStyles({
-    left: {
-        // height: '100vh',
-        // backgroundColor: 'red',
-    },
-    mid: {
+    main: {
         height: '100vh',
         width: '100vw',
-        backgroundColor: 'blue',
+        position: 'fixed',
+        // position: 'relative',
         // maxWidth: '600px',
         // width: '600px',
-    },
-    right: {
-        // height: '100vh',
-        // backgroundColor: 'red',
-        // backdropFilter: 'blur(30px)',
-    },
+    }
 });
 
 interface Props {
+    myProfile: ProfileResponse;
     middleMainContent: JSX.Element;
     middleSubContent?: JSX.Element; //?をつけるとオプショナルPropsになる
 }
@@ -48,11 +42,32 @@ export const SideNavBar = (props: Props) => {
     const loginData = cookies.sessionData as AtpSessionData;
 
     return(
-        <Grid className={classes.mid} container alignItems='center' justifyContent='center'>
-            {/* <div id='mid'  */}
+        <Fragment>
+            <Grid className={classes.main} container alignItems="center" justifyContent="center">
                 {props.middleMainContent}
-            {/* </div> */}
-        </Grid>
+
+            </Grid>
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between'
+                
+            }}>
+                <Hidden lgDown>
+                    <Grid container style={{width: '100%', height: '100vh', backgroundColor: 'blue'}}>
+                        <p>hello</p>
+                    </Grid>
+                </Hidden>
+                <Hidden lgDown>
+                    <Grid container style={{width: '100%', height: '100vh', minWidth: 620, maxWidth: 620, backgroundColor: 'red'}}>
+                    </Grid>
+                </Hidden>
+                <Hidden lgDown>
+                    <Grid container style={{width: '100%', height: '100vh', backgroundColor: 'yellow'}}>
+                        <p>hello</p>
+                    </Grid>
+                </Hidden>
+            </Box>
+        </Fragment>
     )
 }
 

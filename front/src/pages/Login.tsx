@@ -116,6 +116,7 @@ export const Login = () => {
     const navigate = useNavigate();
     const classes = useStyles();
 
+
     // アニメーション設定
     const bar1 = useSpring({
         // backgroundColor: 'red',
