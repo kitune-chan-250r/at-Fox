@@ -24,7 +24,6 @@ interface Props {
 export const FeedEmbedContent = ({ content }: Props) => {
     const classes = useStyles();
 
-    console.info(content);
     switch (content?.$type) {
         case 'app.bsky.embed.images#view': // 画像
             return (

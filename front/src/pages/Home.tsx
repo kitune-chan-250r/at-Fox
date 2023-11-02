@@ -46,6 +46,8 @@ export const Home = () => {
                 })
                 .catch(e => {
                     console.info(e);
+                    removeCookie('sessionData');
+                    navigate('/login');
                 });
         }
 
