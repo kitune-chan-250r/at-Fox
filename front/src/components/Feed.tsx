@@ -233,7 +233,7 @@ export const Feed = ({index, feed, updateIndexFeed}: Props) => {
                                 </a>{' ' + index}
                             </Box>
                         </Grid>
-                        <Grid item xs={10}>
+                        <Grid item xs={10} style={{maxWidth: '100%', overflowWrap: 'break-word'}}>
                             {
                                 (feed.post?.record as Record)?.text !== undefined ?
                                 (feed.post?.record as Record).text.split('\n').map(

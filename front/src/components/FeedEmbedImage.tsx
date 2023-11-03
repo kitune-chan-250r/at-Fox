@@ -19,14 +19,10 @@ interface Props {
     view: AppBskyEmbedImages.View;
 }
 /**
- * Feedに埋め込まれた動画、画像、OGPを表示するコンポーネント
- * 画像１枚の場合、複数枚の場合
- * 動画の場合、複数の動画の場合(現状ありえる？)
- * それぞれ別の振る舞いをするようにする
+ * Feedに埋め込まれた画像を表示するコンポーネント
  */
 export const FeedEmbedImage = ({ view }: Props) => {
     const classes = useStyles();
-
     return (
         <ImageList
             style={{

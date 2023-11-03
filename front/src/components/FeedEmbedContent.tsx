@@ -7,6 +7,7 @@ import {
 } from '@atproto/api';
 import FeedEmbedImage from "./FeedEmbedImage";
 import { makeStyles } from '@mui/styles';
+import EmbedFeed from "./EmbedFeed";
 
 const useStyles = makeStyles({
     
@@ -32,9 +33,7 @@ export const FeedEmbedContent = ({ content }: Props) => {
             
         case 'app.bsky.embed.record#view': // feed
             return (
-                <Fragment>
-
-                </Fragment>
+                <EmbedFeed view={content as AppBskyEmbedRecord.View} />
             )
 
         default: // 当てはまらないコンテンツは一旦無視
