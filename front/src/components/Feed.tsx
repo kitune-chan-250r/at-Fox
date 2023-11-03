@@ -17,6 +17,7 @@ import StarIcon from '@mui/icons-material/Star';
 import RepeatIcon from '@mui/icons-material/Repeat';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import FeedEmbedContent from "./FeedEmbedContent";
 
 const useStyles = makeStyles({
     feedContainer: {
@@ -42,7 +43,7 @@ const useStyles = makeStyles({
     feedRightArea: {
         backgroundColor: 'gray',
         margin: 6,
-        overflow: 'visible',
+        // overflow: 'visible',
         height: '100%',
     },
     feedContent: {
@@ -241,11 +242,13 @@ export const Feed = ({index, feed, updateIndexFeed}: Props) => {
                                 )
                                     : ''
                             }
+                            {/* <FeedEmbedContent content={feed.post.embed}/> */}
                         </Grid>
+                        <FeedEmbedContent content={feed.post.embed}/>
                         {/* <Grid item xs={1}> */}
                             {/* RT数とか ふぁぼは絶対に☆アイコン */}
-                            {buttonsMemo}
-                        </Grid>
+                        {buttonsMemo}
+                    </Grid>
                     {/* </Grid> */}
                 </Stack>
             </Box>
