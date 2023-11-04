@@ -29,6 +29,7 @@ const useStyles = makeStyles({
 });
 
 interface Props {
+    virtuosoRef: any;
     isInit: boolean;
     myProfile: ProfileResponse;
     feeds: FeedViewPost[];
@@ -39,20 +40,21 @@ interface Props {
 }
 
 export const Timeline = ({ 
+    virtuosoRef,
     isInit,
     myProfile, 
     feeds, 
     getMyTimeline, 
     updateIndexFeed,
     refreshTimelineFeeds,
-    updateTimelineFeeds
+    updateTimelineFeeds,
 }: Props) => {
     const [cookies, setCookie, removeCookie] = useCookies();
-    const [agent, setAgent] = useState({} as BskyAgent);
+    // const [agent, setAgent] = useState({} as BskyAgent);
     // const [queryParams, setQueryParams] = useState({ limit: 50 } as QueryParams);
     // const [feeds, setFeeds] = useState([] as FeedViewPost[]);
-    const client = BskyClient.getInstance();
-    const navigate = useNavigate();
+    // const client = BskyClient.getInstance();
+    // const navigate = useNavigate();
     const classes = useStyles();
 
     useEffect(() => {
@@ -138,6 +140,7 @@ export const Timeline = ({
             {/* <PostFeed myProfile={myProfile} /> */}
             <Virtuoso
                 className={classes.timeline}
+                ref={virtuosoRef}
                 totalCount={feeds.length}
                 endReached={getMyTimeline}
                 // startReached={getMyTimeline}

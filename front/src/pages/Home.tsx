@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCookies } from "react-cookie";
 import { SessionData } from "../types/SessionData";
 import { checkSessionData } from "../utils/Utils";
@@ -12,6 +12,7 @@ import BskyClient from "../utils/BskyClient";
 import PostFeed from "../components/PostFeed";
 import { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 import { Response as TimelineResponse, QueryParams } from "@atproto/api/dist/client/types/app/bsky/feed/getTimeline"
+import { VirtuosoHandle } from "react-virtuoso";
 // import { BskyAgent, AtpSessionEvent, AtpSessionData } from '@atproto/api';
 
 export enum FeedAlgorithm {
@@ -26,10 +27,7 @@ export const Home = () => {
     const [queryParams, setQueryParams] = useState({ limit: 50 } as QueryParams);
     const client = BskyClient.getInstance();
     const navigate = useNavigate();
-    // const loginData = cookies.sessionData as AtpSessionData;
-    // const service = cookies?.service;
-    // var agent: BskyAgent;
-    // var agent = new BskyAgent({service: cookies?.service});
+    const virtuoso = useRef<VirtuosoHandle>(null);
 
     useEffect(() => {
         sessionManage();
@@ -98,7 +96,8 @@ export const Home = () => {
      * getMyTimeline() => そのまま
      */
     const refreshTimelineFeeds = async() => {
-        const res = await client.getTimeline({ limit: 50 })
+        virtuosoScrollTop();
+        client.getTimeline({ limit: 50 })
             .then((res: TimelineResponse) => {
                 // cursor 更新
                 queryParams.cursor = res.data.cursor;
@@ -126,15 +125,22 @@ export const Home = () => {
                 console.info(res);
             });
     }
+
+    // 一番上へスクロール
+    const virtuosoScrollTop = () => {
+        virtuoso.current?.scrollToIndex({
+            index: 0,
+            align: 'center',
+            behavior: 'smooth'
+          });
+    }
    
     return(
-        // <div>
-        //     did: { loginData?.did }
-        // </div>
         <SideNavBar 
             myProfile={myProfile}
             middleMainContent={
-                <Timeline 
+                <Timeline
+                    virtuosoRef={virtuoso}
                     myProfile={myProfile} 
                     isInit={isInit} 
                     feeds={feeds}
@@ -149,10 +155,6 @@ export const Home = () => {
             //     <PostFeed />
             // }
         />
-        
-        // <Grid container alignItems="center" justifyContent="center" style={{ height: '100vh', backgroundColor: 'blue' , maxWidth: 600}}>
-        //     <Timeline isInit={isInit} />
-        // </Grid>
     )
 }
 
