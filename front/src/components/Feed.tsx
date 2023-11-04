@@ -9,7 +9,7 @@ import { XRPCResponse } from '@atproto/xrpc';
 import { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 import { Record } from "@atproto/api/dist/client/types/app/bsky/feed/post";
 // import { Record } from "@atproto/api/dist/client/types/app/bsky/feed/post/get";
-import { BskyAgent, AtpSessionEvent, AtpSessionData } from '@atproto/api';
+import { BskyAgent, AtpSessionEvent, AtpSessionData, AppBskyActorDefs } from '@atproto/api';
 import BskyClient from "../utils/BskyClient";
 
 // icons
@@ -223,7 +223,10 @@ export const Feed = ({index, feed, updateIndexFeed}: Props) => {
                         </Avatar>
                     </Box>
                     <Grid className={classes.feedRightArea} container direction={'column'}>
-                        {/* この領域に誰がrepostしたか */}
+                        {/* この領域に誰がrepostしたか とりまdisplyaNameだけ表示だけどアイコンか何か表示したい*/}
+                        { feed?.reason?.$type ===  'app.bsky.feed.defs#reasonRepost' &&
+                            <a>reposted by {(feed.reason.by as AppBskyActorDefs.ProfileViewBasic).displayName}</a>
+                        }
                         <Grid style={{ width: '100%' }} item xs={1}>
                             {/* ユーザー名、handle、右端に経過時間、 */}
                             <Box className={classes.userName}>
