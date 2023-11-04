@@ -213,7 +213,6 @@ export const Login = () => {
                                 <animated.div className={classes.bar} style={bar3} />
                                 <animated.div className={classes.bar} style={bar2} />
                                 <animated.div className={classes.bar} style={bar1} />
-                                
                             </Grid>
                             <Grid container item xs={7} alignItems='center' justifyContent='center'>
                                 {   authErrorText !== '' ?
