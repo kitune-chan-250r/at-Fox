@@ -45,15 +45,15 @@ export const EmbedFeed = ({ view }: Props) => {
                 <Stack direction={'row'}>
                     <Avatar
                         className={classes.avatar}
-                        src={record.author.avatar}
+                        src={record.author?.avatar}
                         sx={{ width: 22, height: 22 }}
                     >
                         N
                     </Avatar>
                     <Box className={classes.userName}>
-                        {record.author.displayName}
+                        {record.author?.displayName}
                         <a>
-                            @{record?.author.handle}
+                            @{record?.author?.handle}
                         </a>
                     </Box>
                 </Stack>
