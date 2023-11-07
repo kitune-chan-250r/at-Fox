@@ -24,7 +24,7 @@
 import { Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BskyAgent, AtpSessionEvent, AtpSessionData } from '@atproto/api';
-import { Box, Button, Card, FormControl, FormHelperText, Grid, IconButton, InputAdornment, InputLabel, Paper, Snackbar, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, FormControl, FormHelperText, Grid, Hidden, IconButton, InputAdornment, InputLabel, Paper, Snackbar, TextField, Typography } from '@mui/material';
 import { useCookies } from "react-cookie";
 import { makeStyles } from '@mui/styles';
 import { animated, useSpring } from "react-spring";
@@ -201,7 +201,9 @@ export const Login = () => {
                 <Grid id='left' className={classes.left} item lg={3} xs={0}>
                 </Grid>
                 <Grid id='mid' className={classes.mid} container item lg={6} xs={12} alignItems='center' justifyContent='center'>
-                    <Particle />
+                    <Hidden lgDown>
+                        <Particle />
+                    </Hidden>
                     <Box className={classes.loginPaper}>   
                         <Grid className={classes.loginPaperContent} container direction='column' alignItems='center' justifyContent='center' >
                             <Typography fontFamily={`"Libre Barcode 39 Extended Text"`} fontSize={70} >
@@ -213,7 +215,6 @@ export const Login = () => {
                                 <animated.div className={classes.bar} style={bar3} />
                                 <animated.div className={classes.bar} style={bar2} />
                                 <animated.div className={classes.bar} style={bar1} />
-                                
                             </Grid>
                             <Grid container item xs={7} alignItems='center' justifyContent='center'>
                                 {   authErrorText !== '' ?
