@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, memo, useEffect, useMemo, useState } from "react";
 import { useCookies } from "react-cookie";
 import { SessionData } from "../types/SessionData";
 import { addFeedViewer, checkSessionData, deleteFeedViewer } from "../utils/Utils";
@@ -36,7 +36,7 @@ const useStyles = makeStyles({
         // height: '100%',
         backgroundColor: 'green',
         // wisth: 55,
-        maxWidth:55,
+        maxWidth: 55,
         // display: 'flex',
         // justifyContent: 'center',
     },
@@ -47,14 +47,14 @@ const useStyles = makeStyles({
         height: '100%',
     },
     feedContent: {
-    
+
     },
     avatar: {
         marginTop: 10,
         marginLeft: 'auto',
         marginRight: 'auto',
-        minWidth:35,
-        maxWidth:55,
+        minWidth: 35,
+        maxWidth: 55,
     },
     userName: {
         fontWeight: 'bold',
@@ -81,7 +81,7 @@ interface Props {
     updateIndexFeed: (index: number, feed: FeedViewPost) => void;
 }
 
-export const Feed = ({index, feed, updateIndexFeed}: Props) => {
+export const Feed = ({ index, feed, updateIndexFeed }: Props) => {
     const [cookies, setCookie, removeCookie] = useCookies();
     const [liked, setLiked] = useState(false);
     const [reposted, setReposted] = useState(false);
@@ -102,11 +102,11 @@ export const Feed = ({index, feed, updateIndexFeed}: Props) => {
     // 一定時間ごとに指定した範囲のfeedをgetpostsで取得して内容を更新していく
     // 連打でfeed.post.viewer?.likeがundefinedになる理由は実行されるまで内容が作られていないから
     // sendrepost,sendlike の戻り値uriはdelete~の引数になる
-   
+
     const loginData = cookies.sessionData as SessionData;
 
     // 
-    const handleClickFeedLike = async() => {
+    const handleClickFeedLike = async () => {
         var tempFeed = feed;
 
         if (feed.post.viewer?.like) { // すでにlikeしている場合(ホントはviewer.likeのat://did:plc の中身を自分のdidを見比べたほうがいい？)
@@ -132,10 +132,10 @@ export const Feed = ({index, feed, updateIndexFeed}: Props) => {
                 .catch((error) => {
                     console.error(error);
                 });
-        } 
+        }
     }
 
-    const handleClickFeedRepost = async() => {
+    const handleClickFeedRepost = async () => {
         var tempFeed = feed;
 
         if (feed.post.viewer?.repost) {
@@ -172,7 +172,7 @@ export const Feed = ({index, feed, updateIndexFeed}: Props) => {
                 <Grid item xs={3}>
                     <div>
                         <Stack className={classes.utilArea} direction={'row'} spacing={1} >
-                            <ChatBubbleIcon htmlColor="white"/>
+                            <ChatBubbleIcon htmlColor="white" />
                             <a className={classes.iconText}>{feed.post?.replyCount}</a>
                         </Stack>
                     </div>
@@ -180,7 +180,7 @@ export const Feed = ({index, feed, updateIndexFeed}: Props) => {
                 <Grid item xs={3}>
                     <div onClick={handleClickFeedRepost}>
                         <Stack className={classes.utilArea} direction={'row'} spacing={1}>
-                            { reposted ? <RepeatIcon htmlColor="green" /> : <RepeatIcon /> }
+                            {reposted ? <RepeatIcon htmlColor="green" /> : <RepeatIcon />}
                             <a className={classes.iconText}>
                                 {/* { isReposted && !feed.post.viewer?.repost ? (feed.post?.repostCount as number) + 1 : feed.post?.repostCount} */}
                                 {feed.post?.repostCount}
@@ -188,10 +188,10 @@ export const Feed = ({index, feed, updateIndexFeed}: Props) => {
                         </Stack>
                     </div>
                 </Grid>
-                <Grid item xs={3}> 
+                <Grid item xs={3}>
                     <div onClick={handleClickFeedLike}>
                         <Stack className={classes.utilArea} direction={'row'} spacing={1}>
-                            { liked ? <StarIcon htmlColor="yellow" /> : <StarIcon />}
+                            {liked ? <StarIcon htmlColor="yellow" /> : <StarIcon />}
                             <a className={classes.iconText}>
                                 {feed.post?.likeCount}
                             </a>
@@ -224,7 +224,7 @@ export const Feed = ({index, feed, updateIndexFeed}: Props) => {
                     </Box>
                     <Grid className={classes.feedRightArea} container direction={'column'}>
                         {/* この領域に誰がrepostしたか とりまdisplyaNameだけ表示だけどアイコンか何か表示したい*/}
-                        { feed?.reason?.$type ===  'app.bsky.feed.defs#reasonRepost' &&
+                        {feed?.reason?.$type === 'app.bsky.feed.defs#reasonRepost' &&
                             <a>reposted by {(feed.reason.by as AppBskyActorDefs.ProfileViewBasic).displayName}</a>
                         }
                         <Grid style={{ width: '100%' }} item xs={1}>
@@ -236,20 +236,20 @@ export const Feed = ({index, feed, updateIndexFeed}: Props) => {
                                 </a>{' ' + index}
                             </Box>
                         </Grid>
-                        <Grid item xs={10} style={{maxWidth: '100%', overflowWrap: 'break-word'}}>
+                        <Grid item xs={10} style={{ maxWidth: '100%', overflowWrap: 'break-word' }}>
                             {
                                 (feed.post?.record as Record)?.text !== undefined ?
-                                (feed.post?.record as Record).text.split('\n').map(
-                                    // (e, index)=> <div key={index}>{e}<br/></div>
-                                    (e, index)=> <div key={index}>{e}<br/></div>
-                                )
+                                    (feed.post?.record as Record).text.split('\n').map(
+                                        // (e, index)=> <div key={index}>{e}<br/></div>
+                                        (e, index) => <div key={index}>{e}<br /></div>
+                                    )
                                     : ''
                             }
                             {/* <FeedEmbedContent content={feed.post.embed}/> */}
                         </Grid>
-                        <FeedEmbedContent content={feed.post.embed}/>
+                        <FeedEmbedContent content={feed.post.embed} />
                         {/* <Grid item xs={1}> */}
-                            {/* RT数とか ふぁぼは絶対に☆アイコン */}
+                        {/* RT数とか ふぁぼは絶対に☆アイコン */}
                         {buttonsMemo}
                     </Grid>
                     {/* </Grid> */}
@@ -258,11 +258,11 @@ export const Feed = ({index, feed, updateIndexFeed}: Props) => {
         )
     }, [feed, feed.post.viewer?.like, feed.post.viewer?.repost, liked, reposted]);
 
-    return(
+    return (
         <Fragment>
-           {feedMemo} 
+            {feedMemo}
         </Fragment>
     )
 }
 
-export default Feed;
+export default memo(Feed);

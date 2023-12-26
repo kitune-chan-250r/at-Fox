@@ -90,7 +90,7 @@ const useStyles = makeStyles({
         position: 'absolute',
         width: '100vw',
         height: '100vh',
-        
+
         // backdropFilter: 'blur(1px)',
         zIndex: 1
     },
@@ -153,16 +153,16 @@ export const Login = () => {
         setMove(true);
     }, []);
 
-    const login = async() => {
+    const login = async () => {
         // cookieを見てセッション情報が存在していれば/homeに移動
         const agent = new BskyAgent({
             service: service,
             persistSession: (evt: AtpSessionEvent, sess?: AtpSessionData) => {
-            //   store the session-data for reuse 
-            //   console.info(evt);
-            //   console.info(sess);
+                //   store the session-data for reuse 
+                //   console.info(evt);
+                //   console.info(sess);
             }
-          });
+        });
         setAuthErrorText('');
         await agent.login({
             identifier: handle,
@@ -173,11 +173,11 @@ export const Login = () => {
                 // sessionStorage.setItem('sessionData', JSON.stringify(e.data));
                 // ログイン成功時はcookieにデータを送信する
                 setCookie(
-                    'sessionData', 
+                    'sessionData',
                     JSON.stringify(e.data),
                 );
                 setCookie(
-                    'service', 
+                    'service',
                     service,
                 );
                 navigate("/home");
@@ -187,29 +187,29 @@ export const Login = () => {
             setAuthErrorText(e.message);
         });
     }
-   
-    return(
+
+    return (
         <Fragment>
             {/* <div className={classes.backgroundFilter}></div> */}
-            <Grid 
-                container 
-                style={{ 
+            <Grid
+                container
+                style={{
                     backgroundColor: 'black',
                 }}
             >
-                
+
                 <Grid id='left' className={classes.left} item lg={3} xs={0}>
                 </Grid>
                 <Grid id='mid' className={classes.mid} container item lg={6} xs={12} alignItems='center' justifyContent='center'>
                     <Hidden lgDown>
                         <Particle />
                     </Hidden>
-                    <Box className={classes.loginPaper}>   
+                    <Box className={classes.loginPaper}>
                         <Grid className={classes.loginPaperContent} container direction='column' alignItems='center' justifyContent='center' >
                             <Typography fontFamily={`"Libre Barcode 39 Extended Text"`} fontSize={70} >
                                 AT Fox
                             </Typography>
-                            <Grid  item xs={1}>
+                            <Grid item xs={1}>
                                 <animated.div className={classes.bar} style={bar5} />
                                 <animated.div className={classes.bar} style={bar4} />
                                 <animated.div className={classes.bar} style={bar3} />
@@ -217,87 +217,87 @@ export const Login = () => {
                                 <animated.div className={classes.bar} style={bar1} />
                             </Grid>
                             <Grid container item xs={7} alignItems='center' justifyContent='center'>
-                                {   authErrorText !== '' ?
-                                    <FormHelperText error>{ authErrorText }</FormHelperText>
+                                {authErrorText !== '' ?
+                                    <FormHelperText error>{authErrorText}</FormHelperText>
                                     :
                                     ''
                                 }
-                                
-                                <TextField 
+
+                                <TextField
                                     id="serviceInput"
-                                    fullWidth 
-                                    variant="standard" 
+                                    fullWidth
+                                    variant="standard"
                                     margin="dense"
                                     placeholder="Service"
                                     // helperText={ log
                                     //     <FormHelperText error required >{loginHelperText}</FormHelperText>
                                     // }
-                                    value={service} 
-                                    sx={{ 
-                                        input: { 
-                                            color: 'white', 
-                                            fontSize: '20px', 
-                                            fontWeight: '100', 
+                                    value={service}
+                                    sx={{
+                                        input: {
+                                            color: 'white',
+                                            fontSize: '20px',
+                                            fontWeight: '100',
                                             fontFamily: 'Roboto Mono',
                                         },
-                                        backgroundColor: 'rgba(33, 33, 33, 0.5)' ,
+                                        backgroundColor: 'rgba(33, 33, 33, 0.5)',
                                     }}
                                     InputProps={{
                                         startAdornment: (
                                             <InputAdornment position="start">
-                                                <PublicIcon 
-                                                    className={classes.textFieldIcon} 
-                                                    htmlColor="white" 
+                                                <PublicIcon
+                                                    className={classes.textFieldIcon}
+                                                    htmlColor="white"
                                                 />
                                             </InputAdornment>
                                         ),
                                     }}
                                     onChange={(event) => setService(event.target.value)}
                                 />
-                                <TextField 
+                                <TextField
                                     id="handleInput"
-                                    fullWidth 
-                                    variant="standard" 
+                                    fullWidth
+                                    variant="standard"
                                     // margin="dense"
                                     placeholder="Handle or email"
                                     size="medium"
-                                    value={handle} 
-                                    sx={{ 
-                                        input: { 
-                                            color: 'white', 
-                                            fontSize: '20px', 
-                                            fontWeight: '100', 
+                                    value={handle}
+                                    sx={{
+                                        input: {
+                                            color: 'white',
+                                            fontSize: '20px',
+                                            fontWeight: '100',
                                             fontFamily: 'Roboto Mono',
-                                        }, 
-                                        backgroundColor: 'rgba(33, 33, 33, 0.5)' ,
+                                        },
+                                        backgroundColor: 'rgba(33, 33, 33, 0.5)',
                                     }}
                                     InputProps={{
                                         startAdornment: (
                                             <InputAdornment position="start">
                                                 <AlternateEmailIcon
                                                     className={classes.textFieldIcon}
-                                                    htmlColor="white" 
+                                                    htmlColor="white"
                                                 />
                                             </InputAdornment>
                                         ),
                                     }}
-                                    onChange={(event) => setHandle(event.target.value)} 
+                                    onChange={(event) => setHandle(event.target.value)}
                                 />
-                                <TextField 
+                                <TextField
                                     id="passInput"
-                                    fullWidth 
-                                    variant="standard" 
+                                    fullWidth
+                                    variant="standard"
                                     // margin="normal"
                                     placeholder="Password"
-                                    value={pass} 
-                                    sx={{ 
-                                        input: { 
-                                            color: 'white', 
-                                            fontSize: '20px', 
-                                            fontWeight: '100', 
+                                    value={pass}
+                                    sx={{
+                                        input: {
+                                            color: 'white',
+                                            fontSize: '20px',
+                                            fontWeight: '100',
                                             fontFamily: 'Roboto Mono',
                                         },
-                                        backgroundColor: 'rgba(33, 33, 33, 0.5)' ,
+                                        backgroundColor: 'rgba(33, 33, 33, 0.5)',
                                     }}
                                     type={isShowPassword ? 'text' : 'password'}
                                     InputProps={{
@@ -305,7 +305,7 @@ export const Login = () => {
                                             <InputAdornment position="start">
                                                 <VpnKeyIcon
                                                     className={classes.textFieldIcon}
-                                                    htmlColor="white" 
+                                                    htmlColor="white"
                                                 />
                                             </InputAdornment>
                                         ),
@@ -314,25 +314,25 @@ export const Login = () => {
                                                 <IconButton
                                                     aria-label="toggle password visibility"
                                                     onClick={() => setShowPassword(!isShowPassword)}
-                                                    // onMouseDown={handleMouseDownPassword}
+                                                // onMouseDown={handleMouseDownPassword}
                                                 >
-                                                    {isShowPassword ? <VisibilityIcon htmlColor="white"/> : <VisibilityOffIcon  />}
+                                                    {isShowPassword ? <VisibilityIcon htmlColor="white" /> : <VisibilityOffIcon />}
                                                 </IconButton>
                                             </InputAdornment>
                                         ),
                                     }}
-                                    onChange={(event) => setPass(event.target.value)} 
+                                    onChange={(event) => setPass(event.target.value)}
                                 />
-                                <Button 
-                                    onClick={login} 
-                                    variant="contained" 
-                                    fullWidth 
+                                <Button
+                                    onClick={login}
+                                    variant="contained"
+                                    fullWidth
                                 >
                                     Login
                                 </Button>
                             </Grid>
                         </Grid>
-                        </Box> 
+                    </Box>
                     {/* </Paper> */}
                     {/* </Card> */}
                 </Grid>

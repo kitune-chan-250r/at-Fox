@@ -1,7 +1,5 @@
 import { Fragment } from "react";
 import {
-    AppBskyEmbedExternal,
-    AppBskyEmbedImages,
     AppBskyEmbedRecord
 } from '@atproto/api';
 import { makeStyles } from '@mui/styles';

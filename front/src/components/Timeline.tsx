@@ -1,10 +1,11 @@
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, memo, useEffect, useMemo, useState } from "react";
 import { useCookies } from "react-cookie";
 import { SessionData } from "../types/SessionData";
 import { checkSessionData } from "../utils/Utils";
 import { useNavigate } from "react-router-dom";
 import { Box, Grid } from "@mui/material";
 import { makeStyles } from '@mui/styles';
+import styled from '@emotion/styled'
 
 // atproto
 import { BskyAgent, AtpSessionData } from "@atproto/api";
@@ -25,6 +26,9 @@ const useStyles = makeStyles({
     timeline: {
         width: '100%',
         height: '100%',
+        "@media (min-width:1280px)": {
+            marginLeft: 15,
+        },
     }
 });
 
@@ -39,12 +43,12 @@ interface Props {
     updateTimelineFeeds: () => Promise<void>;
 }
 
-export const Timeline = ({ 
+export const Timeline = ({
     virtuosoRef,
     isInit,
-    myProfile, 
-    feeds, 
-    getMyTimeline, 
+    myProfile,
+    feeds,
+    getMyTimeline,
     updateIndexFeed,
     refreshTimelineFeeds,
     updateTimelineFeeds,
@@ -58,8 +62,10 @@ export const Timeline = ({
     const classes = useStyles();
 
     useEffect(() => {
-        if (isInit) {
+        if (isInit && feeds.length === 0) {
+            console.info("getMyTimeline");
             getMyTimeline();
+            // refreshTimelineFeeds();
         }
     }, [isInit]);
 
@@ -77,7 +83,7 @@ export const Timeline = ({
     //             console.info(res);
     //         });
     // }
-    
+
     // feedコンポーネント内から内容を更新する場合に使用
     // const updateIndexFeed = async(index: number, feed: FeedViewPost) => {
     //     console.info(':update feed in local:');
@@ -86,7 +92,7 @@ export const Timeline = ({
     //     updatedFeeds[index] = feed;
 
     //     setFeeds([...updatedFeeds]);
-        
+
     //     console.info(updatedFeeds[index])
     // }
 
@@ -132,7 +138,8 @@ export const Timeline = ({
 
     const loginData = cookies.sessionData as AtpSessionData;
 
-    return(
+    const List = styled.div`width: 100vw;`
+    return (
         <Fragment>
             {/* <div>
                 {cookies?.sessionData.did}
@@ -150,19 +157,19 @@ export const Timeline = ({
                 // overscan={200}
                 data={feeds}
                 components={{
-                    Header: () => <PostFeed myProfile={myProfile} refreshTimelineFeeds={refreshTimelineFeeds} />
+                    Header: () => <PostFeed myProfile={myProfile} refreshTimelineFeeds={refreshTimelineFeeds} />,
                 }}
                 itemContent={
                     (index, data) => (
-                    <Feed 
-                        index={index} 
-                        feed={data} 
-                        updateIndexFeed={updateIndexFeed}
-                    />)
+                        <Feed
+                            index={index}
+                            feed={data}
+                            updateIndexFeed={updateIndexFeed}
+                        />)
                 }
             />
-        </Fragment>    
+        </Fragment>
     )
 }
 
-export default Timeline;
+export default memo(Timeline);
