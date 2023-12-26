@@ -1,0 +1,6 @@
+{
+    "name": "at-fox",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "container",
+    "workspaceFolder": "/workspace"
+}

@@ -1,0 +1,10 @@
+services:
+    container:
+        build:
+            context: .
+            dockerfile: .devcontainer/Dockerfile
+        tty: true
+        volumes:
+            - .:/workspace
+        ports:
+            - 3000:3000
