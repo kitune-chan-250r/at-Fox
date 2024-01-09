@@ -1,15 +1,25 @@
-import { Fragment, memo, useEffect, useMemo, useState } from "react";
+import {
+    Fragment,
+    memo,
+    useContext,
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
 import { useCookies } from "react-cookie";
 import { SessionData } from "../types/SessionData";
 import { checkSessionData } from "../utils/Utils";
 import { useNavigate } from "react-router-dom";
 import { Box, Grid } from "@mui/material";
-import { makeStyles } from '@mui/styles';
-import styled from '@emotion/styled'
+import { makeStyles } from "@mui/styles";
+import styled from "@emotion/styled";
 
 // atproto
 import { BskyAgent, AtpSessionData } from "@atproto/api";
-import { Response as TimelineResponse, QueryParams } from "@atproto/api/dist/client/types/app/bsky/feed/getTimeline"
+import {
+    Response as TimelineResponse,
+    QueryParams,
+} from "@atproto/api/dist/client/types/app/bsky/feed/getTimeline";
 import { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 import { Record } from "@atproto/api/dist/client/types/app/bsky/feed/post";
 import { Response as ProfileResponse } from "@atproto/api/dist/client/types/app/bsky/actor/getProfile";
@@ -17,6 +27,7 @@ import { Virtuoso } from "react-virtuoso";
 import Feed from "./Feed";
 import BskyClient from "../utils/BskyClient";
 import PostFeed from "./PostFeed";
+import { TimelineContext } from "../contexts/TimelineProvider";
 
 // export enum FeedAlgorithm {
 //     ReverseChronological = 'reverse-chronological',
@@ -24,34 +35,26 @@ import PostFeed from "./PostFeed";
 
 const useStyles = makeStyles({
     timeline: {
-        width: '100%',
-        height: '100%',
+        width: "100%",
+        height: "100%",
         "@media (min-width:1280px)": {
             marginLeft: 15,
         },
-    }
+    },
 });
 
 interface Props {
     virtuosoRef: any;
     isInit: boolean;
     myProfile: ProfileResponse;
-    feeds: FeedViewPost[];
-    getMyTimeline: () => Promise<void>;
-    updateIndexFeed: (index: number, feed: FeedViewPost) => Promise<void>;
-    refreshTimelineFeeds: () => Promise<void>;
-    updateTimelineFeeds: () => Promise<void>;
+    refreshTimelineAndScrolleTop: () => void;
 }
 
 export const Timeline = ({
     virtuosoRef,
     isInit,
     myProfile,
-    feeds,
-    getMyTimeline,
-    updateIndexFeed,
-    refreshTimelineFeeds,
-    updateTimelineFeeds,
+    refreshTimelineAndScrolleTop,
 }: Props) => {
     const [cookies, setCookie, removeCookie] = useCookies();
     // const [agent, setAgent] = useState({} as BskyAgent);
@@ -60,9 +63,11 @@ export const Timeline = ({
     // const client = BskyClient.getInstance();
     // const navigate = useNavigate();
     const classes = useStyles();
+    const { timeline, getMyTimeline, updateIndexFeed, refreshTimelineFeeds } =
+        useContext(TimelineContext);
 
     useEffect(() => {
-        if (isInit && feeds.length === 0) {
+        if (isInit && timeline.length === 0) {
             console.info("getMyTimeline");
             getMyTimeline();
             // refreshTimelineFeeds();
@@ -101,7 +106,7 @@ export const Timeline = ({
      * 現状の挙動として、
      * refreshTimelineFeeds() => feeds配列を最新の50件に置き換え、元データ廃棄
      * getMyTimeline() => queryParams.cursor を元にさかのぼって50件をfeeds配列の後ろに付け足し
-     * 
+     *
      * 理想の挙動としては、
      * refreshTimelineFeeds() => 現状のfeeds配列の先頭に最新データのみ追加、元データの廃棄は上限までしない
      * getMyTimeline() => そのまま
@@ -138,7 +143,9 @@ export const Timeline = ({
 
     const loginData = cookies.sessionData as AtpSessionData;
 
-    const List = styled.div`width: 100vw;`
+    const List = styled.div`
+        width: 100vw;
+    `;
     return (
         <Fragment>
             {/* <div>
@@ -148,28 +155,32 @@ export const Timeline = ({
             <Virtuoso
                 className={classes.timeline}
                 ref={virtuosoRef}
-                totalCount={feeds.length}
+                totalCount={timeline.length}
                 endReached={getMyTimeline}
                 // startReached={getMyTimeline}
                 // totalListHeightChanged={getMyTimeline}
                 increaseViewportBy={1000}
                 reversed={true}
                 // overscan={200}
-                data={feeds}
+                data={timeline}
                 components={{
-                    Header: () => <PostFeed myProfile={myProfile} refreshTimelineFeeds={refreshTimelineFeeds} />,
+                    Header: () => (
+                        <PostFeed
+                            myProfile={myProfile}
+                            refreshTimelineFeeds={refreshTimelineAndScrolleTop}
+                        />
+                    ),
                 }}
-                itemContent={
-                    (index, data) => (
-                        <Feed
-                            index={index}
-                            feed={data}
-                            updateIndexFeed={updateIndexFeed}
-                        />)
-                }
+                itemContent={(index, data) => (
+                    <Feed
+                        index={index}
+                        feed={data}
+                        updateIndexFeed={updateIndexFeed}
+                    />
+                )}
             />
         </Fragment>
-    )
-}
+    );
+};
 
 export default memo(Timeline);

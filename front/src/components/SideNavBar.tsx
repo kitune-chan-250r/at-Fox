@@ -36,12 +36,12 @@ interface Props {
     myProfile: ProfileResponse;
     middleMainContent: JSX.Element;
     middleSubContent?: JSX.Element; //?をつけるとオプショナルPropsになる
-    refreshTimelineFeeds: () => Promise<void>;
+    refreshTimelineAndScrolleTop: () => void;
 }
 
 export const SideNavBar = ({
     middleMainContent,
-    refreshTimelineFeeds,
+    refreshTimelineAndScrolleTop,
 }: Props) => {
     // const [cookies, setCookie, removeCookie] = useCookies();
     const [cookies] = useCookies();
@@ -93,7 +93,10 @@ export const SideNavBar = ({
                             <Button
                                 variant="outlined"
                                 startIcon={<HomeIcon />}
-                                onClick={refreshTimelineFeeds}
+                                onClick={() => {
+                                    navigate(RoutePath.HOME);
+                                    refreshTimelineAndScrolleTop();
+                                }}
                             >
                                 <p>Home</p>
                             </Button>

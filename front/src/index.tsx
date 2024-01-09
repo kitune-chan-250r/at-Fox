@@ -1,24 +1,27 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import * as serviceWorkerRegistration from './serviceWorkerRegistration';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
+import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
-import { Router } from './routes/Router';
+import { Router } from "./routes/Router";
 import { CookiesProvider } from "react-cookie";
+import { TimelineProvider } from "./contexts/TimelineProvider";
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+    document.getElementById("root") as HTMLElement
 );
 root.render(
-  <React.StrictMode>
-    <CookiesProvider>
-      <BrowserRouter>
-        <Router />
-      </BrowserRouter>
-    </CookiesProvider>
-  </React.StrictMode>
+    <React.StrictMode>
+        <CookiesProvider>
+            <TimelineProvider>
+                <BrowserRouter>
+                    <Router />
+                </BrowserRouter>
+            </TimelineProvider>
+        </CookiesProvider>
+    </React.StrictMode>
 );
 
 // If you want your app to work offline and load faster, you can change
