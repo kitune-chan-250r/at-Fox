@@ -78,7 +78,7 @@ Props) => {
 
     //useEffectで処理を実行
     useEffect(() => {
-        if (isInit) {
+        if (isInit && notifications.length === 0) {
             getListNotifications();
         }
     }, [isInit]);

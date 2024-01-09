@@ -1,4 +1,4 @@
-import { Fragment, memo, useEffect } from "react";
+import { Fragment, memo, useContext, useEffect } from "react";
 import { useCookies } from "react-cookie";
 import { SessionData } from "../types/SessionData";
 import { checkSessionData } from "../utils/Utils";
@@ -17,6 +17,7 @@ import { AtpSessionData } from "@atproto/api";
 import { Response as ProfileResponse } from "@atproto/api/dist/client/types/app/bsky/actor/getProfile";
 import HomeIcon from "@mui/icons-material/Home";
 import { RoutePath } from "../routes/Router";
+import { NotificationContext } from "../contexts/NotificationProvider";
 // import { BskyAgent, AtpSessionEvent, AtpSessionData } from '@atproto/api';
 
 const useStyles = makeStyles({
@@ -44,6 +45,7 @@ export const SideNavBar = ({
     refreshTimelineAndScrolleTop,
 }: Props) => {
     // const [cookies, setCookie, removeCookie] = useCookies();
+    const { getListNotifications } = useContext(NotificationContext);
     const [cookies] = useCookies();
     const navigate = useNavigate();
     const classes = useStyles();
@@ -104,9 +106,10 @@ export const SideNavBar = ({
                             <Button
                                 variant="outlined"
                                 startIcon={<HomeIcon />}
-                                onClick={() =>
-                                    navigate(RoutePath.NOTIFICATIONS)
-                                }
+                                onClick={() => {
+                                    getListNotifications();
+                                    navigate(RoutePath.NOTIFICATIONS);
+                                }}
                             >
                                 <p>Notifications</p>
                             </Button>
