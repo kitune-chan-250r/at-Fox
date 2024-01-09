@@ -2,5 +2,26 @@
     "name": "at-fox",
     "dockerComposeFile": "../docker-compose.yml",
     "service": "container",
-    "workspaceFolder": "/workspace"
+    "workspaceFolder": "/workspace",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "amazonwebservices.aws-toolkit-vscode",
+                "LeonardSSH.vscord",
+                "mhutchie.git-graph",
+                "eamodio.gitlens",
+                "s-nlf-fh.glassit",
+                "VisualStudioExptTeam.vscodeintellicode",
+                "PKief.material-icon-theme",
+                "Equinusocio.vsc-material-theme",
+                "equinusocio.vsc-material-theme-icons",
+                "christian-kohler.npm-intellisense",
+                "IBM.output-colorizer",
+                "ionutvmi.path-autocomplete",
+                "johnpapa.vscode-peacock",
+                "esbenp.prettier-vscode",
+                "christian-kohler.path-intellisense"
+            ]
+        }
+    }
 }
