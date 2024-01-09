@@ -1,4 +1,4 @@
-import { Fragment, memo, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import {
     AppBskyNotificationListNotifications,
     AppBskyFeedDefs,
@@ -23,6 +23,7 @@ import {
 } from "@mui/material";
 import { timelineItemClasses } from "@mui/lab/TimelineItem";
 import Notification from "./Notification";
+import { NotificationContext } from "../contexts/NotificationProvider";
 
 const useStyles = makeStyles({
     timelineContainer: {
@@ -47,8 +48,8 @@ export interface ClientNotification {
 
 interface Props {
     isInit: boolean;
-    bskyNotificationList: AppBskyNotificationListNotifications.Notification[]
-    getListNotifications: () => void;
+    // bskyNotificationList: AppBskyNotificationListNotifications.Notification[]
+    // getListNotifications: () => void;
 }
 
 /**
@@ -56,12 +57,15 @@ interface Props {
  */
 export const Notifications = ({
     isInit,
-    bskyNotificationList,
-    getListNotifications
-}: Props) => {
-    const [notifications, setNotifications] = useState(
-        [] as ClientNotification[]
-    );
+}: // bskyNotificationList,
+// getListNotifications
+Props) => {
+    // const [notifications, setNotifications] = useState(
+    //     [] as ClientNotification[]
+    // );
+
+    const { notifications, getListNotifications } =
+        useContext(NotificationContext);
 
     const classes = useStyles();
     const client = BskyClient.getInstance();
@@ -78,77 +82,6 @@ export const Notifications = ({
             getListNotifications();
         }
     }, [isInit]);
-
-    useEffect(() => {
-        if (bskyNotificationList.length !== 0) {
-            reGroupNotifications();
-        }
-    }, [bskyNotificationList]);
-
-    /**
-     * APIから返される通知の形式からクライアントで表示するコンポーネント
-     * で扱いやすい形式に変換する
-     */
-    const reGroupNotifications = async () => {
-        // like, repostなどのreasonSubjectがある通知をまとめて
-        // 後からまとめてfeedの内容を取得するための重複のないリストを作成する
-        let reasonSubjectList = Array.from(
-            new Set(
-                bskyNotificationList
-                    .filter(
-                        (notification) =>
-                            notification.reasonSubject != undefined
-                    )
-                    .map((notification) => notification.reasonSubject as string)
-            ).values()
-        );
-
-        let reasonSubjectQueryParams = {} as AppBskyFeedGetPosts.QueryParams;
-        reasonSubjectQueryParams.uris = reasonSubjectList;
-
-        // まとめてfeedの内容を取得
-        let reasonSubjectRecords = await client.getFeeds(
-            reasonSubjectQueryParams
-        );
-
-        let clientNotificationList = [] as ClientNotification[];
-
-        // reasonSubjectごとにグループ化した通知をリストに入れる
-        reasonSubjectList.forEach((reasonSubject) => {
-            let clientNotification = {} as ClientNotification;
-            clientNotification.reasonSubject =
-                reasonSubjectRecords.data.posts.find(
-                    (feed) => feed.uri === reasonSubject
-                );
-            clientNotification.likeOrRepost = bskyNotificationList.filter(
-                (notifications) => notifications.reasonSubject === reasonSubject
-            );
-            clientNotification.indexedAt =
-                clientNotification.likeOrRepost[0].indexedAt;
-            clientNotificationList.push(clientNotification);
-        });
-
-        // followなどのreasonSubjectがない通知を整形してリストに入れる
-        bskyNotificationList
-            .filter((notification) => notification.reasonSubject == undefined)
-            .forEach((notification) => {
-                let clientNotification = {} as ClientNotification;
-                clientNotification.other = notification;
-                clientNotification.indexedAt = notification.indexedAt;
-                clientNotificationList.push(clientNotification);
-            });
-
-        // ただ通知を詰めただけのリストの状態だと
-        // 時間がめちゃくちゃなのでindexedAtでソートを行う
-        clientNotificationList.sort(
-            (a, b) =>
-                new Date(b.indexedAt).getTime() -
-                new Date(a.indexedAt).getTime()
-        );
-
-        // console.info(clientNotificationList);
-        setNotifications(clientNotificationList);
-    };
 
     return (
         <Fragment>
@@ -178,4 +111,4 @@ export const Notifications = ({
     );
 };
 
-export default memo(Notifications);
+export default Notifications;

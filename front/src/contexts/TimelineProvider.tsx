@@ -115,7 +115,7 @@ export const TimelineProvider = ({
             refreshTimelineFeeds,
             updateIndexFeed,
         }),
-        [timeline]
+        [timeline, getMyTimeline, refreshTimelineFeeds, updateIndexFeed]
     );
 
     return (

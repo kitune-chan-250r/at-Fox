@@ -34,6 +34,7 @@ import { VirtuosoHandle } from "react-virtuoso";
 import { RoutePath } from "../routes/Router";
 import Notifications from "../components/Notifications";
 import { TimelineContext } from "../contexts/TimelineProvider";
+import { NotificationContext } from "../contexts/NotificationProvider";
 // import { BskyAgent, AtpSessionEvent, AtpSessionData } from '@atproto/api';
 
 export enum FeedAlgorithm {
@@ -55,17 +56,6 @@ export const Home = ({ path }: Props) => {
     const [cookies, setCookie, removeCookie] = useCookies();
     const [isInit, setIsInit] = useState(false);
     const [myProfile, setMyProfile] = useState({} as ProfileResponse);
-    const [feeds, setFeeds] = useState([] as FeedViewPost[]);
-    const [queryParams, setQueryParams] = useState({
-        limit: 50,
-    } as QueryParams);
-    const [notificationQueryParams, setNotificationQueryParams] = useState({
-        limit: 20,
-    } as AppBskyNotificationListNotifications.QueryParams);
-    const [bskyNotificationList, setBskyNotificationList] = useState(
-        [] as AppBskyNotificationListNotifications.Notification[]
-    );
-    const client = BskyClient.getInstance();
     const navigate = useNavigate();
     const virtuoso = useRef<VirtuosoHandle>(null);
 
@@ -116,22 +106,6 @@ export const Home = ({ path }: Props) => {
         virtuosoScrollTop();
     };
 
-    /**
-     * 通知を取得
-     */
-    const getListNotifications = () => {
-        client
-            .listNotifications(notificationQueryParams)
-            .then((e) => {
-                // queryParams.cursor = e.data.cursor; // 一旦除外
-                setQueryParams(queryParams);
-                setBskyNotificationList(e.data.notifications);
-            })
-            .catch((e) => {
-                console.error(e);
-            });
-    };
-
     return (
         <SideNavBar
             myProfile={myProfile}
@@ -150,8 +124,8 @@ export const Home = ({ path }: Props) => {
                     {path === RoutePath.NOTIFICATIONS && (
                         <Notifications
                             isInit={isInit}
-                            bskyNotificationList={bskyNotificationList}
-                            getListNotifications={getListNotifications}
+                            // bskyNotificationList={bskyNotificationList}
+                            // getListNotifications={getListNotifications}
                         />
                     )}
                 </Fragment>

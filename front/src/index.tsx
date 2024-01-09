@@ -8,6 +8,7 @@ import { BrowserRouter } from "react-router-dom";
 import { Router } from "./routes/Router";
 import { CookiesProvider } from "react-cookie";
 import { TimelineProvider } from "./contexts/TimelineProvider";
+import { NotificationProvider } from "./contexts/NotificationProvider";
 
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
@@ -16,9 +17,11 @@ root.render(
     <React.StrictMode>
         <CookiesProvider>
             <TimelineProvider>
-                <BrowserRouter>
-                    <Router />
-                </BrowserRouter>
+                <NotificationProvider>
+                    <BrowserRouter>
+                        <Router />
+                    </BrowserRouter>
+                </NotificationProvider>
             </TimelineProvider>
         </CookiesProvider>
     </React.StrictMode>
