@@ -89,6 +89,7 @@ Props) => {
                 className={classes.timelineContainer}
                 container
                 justifyContent="center"
+                key={"notification-container"}
             >
                 <Timeline
                     className={classes.timeline}
@@ -101,7 +102,7 @@ Props) => {
                 >
                     {notifications.map((notification, index) => (
                         <Notification
-                            index={index}
+                            key={"notification_" + index}
                             clientNotification={notification}
                         />
                     ))}
