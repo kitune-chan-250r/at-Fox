@@ -6,5 +6,8 @@ services:
         tty: true
         volumes:
             - .:/workspace
+            - react_node_modules:/workspace/node_modules
         ports:
             - 3000:3000
+volumes:
+    react_node_modules:

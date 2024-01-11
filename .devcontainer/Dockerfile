@@ -25,4 +25,4 @@ RUN apt-get update  --fix-missing
 RUN apt-get install -y nodejs
 
 RUN apt-get install -y git
-# RUN echo 'export CHOKIDAR_USEPOLLING=true' >> ~/.bashrc
+RUN echo 'export CHOKIDAR_USEPOLLING=true' >> ~/.bashrc
