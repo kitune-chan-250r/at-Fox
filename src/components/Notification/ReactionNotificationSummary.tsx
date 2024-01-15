@@ -33,45 +33,58 @@ export const ReactionNotificationSummary = ({
             style={{ width: "100%" }}
             key={"reaction-notification-" + reasonSubject?.cid}
         >
+            {/* この部分をNotificationコンポーネントへ移動させる */}
             <Box style={{ width: "100%" }}>
                 {(reasonSubject?.record as Record)?.text}
             </Box>
 
-            {likeOrRepost.filter((e) => e.reason === "repost").length !== 0 &&
-                <Stack direction={"row"} spacing={1}>
-                    <Grid container alignItems="center">
-                        <RepeatIcon color="success" />
-                        <AvatarGroup>
-                            {likeOrRepost
-                                .filter((e) => e.reason === "repost")
-                                .map((e) => (
-                                    <Avatar
-                                        src={e.author.avatar}
-                                        key={"notice-repost-avatar-" + e.author.did}
-                                    />
-                                ))}
-                        </AvatarGroup>
-                    </Grid>
-                </Stack>
-            }
+            <Box style={{ width: "100%" }}>
+                {likeOrRepost.filter((e) => e.reason === "repost").length !==
+                    0 && (
+                    <Stack direction={"row"} spacing={1}>
+                        <Grid container alignItems="center">
+                            <RepeatIcon color="success" />
+                            <AvatarGroup>
+                                {likeOrRepost
+                                    .filter((e) => e.reason === "repost")
+                                    .map((e) => (
+                                        <Avatar
+                                            src={e.author.avatar}
+                                            key={
+                                                "notice-repost-avatar-" +
+                                                e.author.did
+                                            }
+                                        />
+                                    ))}
+                            </AvatarGroup>
+                        </Grid>
+                    </Stack>
+                )}
+            </Box>
 
-            {likeOrRepost.filter((e) => e.reason === "like").length !== 0 &&
-                <Stack direction={"row"} spacing={1}>
-                    <Grid container alignItems="center">
-                        <StarIcon color="warning" />
-                        <AvatarGroup>
-                            {likeOrRepost
-                                .filter((e) => e.reason === "like")
-                                .map((e) => (
-                                    <Avatar
-                                        src={e.author.avatar}
-                                        key={"notice-like-avatar-" + e.author.did}
-                                    />
-                                ))}
-                        </AvatarGroup>
-                    </Grid>
-                </Stack>
-            }
+            <Box style={{ width: "100%" }}>
+                {likeOrRepost.filter((e) => e.reason === "like").length !==
+                    0 && (
+                    <Stack direction={"row"} spacing={1}>
+                        <Grid container alignItems="center">
+                            <StarIcon color="warning" />
+                            <AvatarGroup>
+                                {likeOrRepost
+                                    .filter((e) => e.reason === "like")
+                                    .map((e) => (
+                                        <Avatar
+                                            src={e.author.avatar}
+                                            key={
+                                                "notice-like-avatar-" +
+                                                e.author.did
+                                            }
+                                        />
+                                    ))}
+                            </AvatarGroup>
+                        </Grid>
+                    </Stack>
+                )}
+            </Box>
         </Grid>
     );
 };

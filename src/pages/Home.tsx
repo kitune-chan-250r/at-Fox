@@ -32,7 +32,7 @@ import {
 } from "@atproto/api/dist/client/types/app/bsky/feed/getTimeline";
 import { VirtuosoHandle } from "react-virtuoso";
 import { RoutePath } from "../routes/Router";
-import Notifications from "../components/Notifications";
+import Notifications from "../components/Notification/Notifications";
 import { TimelineContext } from "../contexts/TimelineProvider";
 import { NotificationContext } from "../contexts/NotificationProvider";
 // import { BskyAgent, AtpSessionEvent, AtpSessionData } from '@atproto/api';

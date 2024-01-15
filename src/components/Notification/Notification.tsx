@@ -1,5 +1,5 @@
 import { makeStyles } from "@mui/styles";
-import { Fragment, memo } from "react";
+import { Fragment, memo, useState } from "react";
 import { ClientNotification } from "./Notifications";
 import {
     Timeline,
@@ -9,8 +9,18 @@ import {
     TimelineContent,
     TimelineDot,
 } from "@mui/lab";
-import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
-import ReactionNotificationSummary from "./Notification/ReactionNotificationSummary";
+import { AppBskyEmbedRecord, AppBskyFeedDefs } from "@atproto/api";
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Box,
+} from "@mui/material";
+import ReactionNotificationSummary from "./ReactionNotificationSummary";
+import EmbedFeed from "../EmbedFeed";
+import Feed from "../Feed";
+import { NotificationSummaryFeed } from "./NotificationSummaryFeed";
+import { PostView } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 
 const useStyles = makeStyles({});
 
@@ -20,9 +30,11 @@ interface Props {
 }
 
 /**
- * 個々の通知を描画するコンポーネントexpanded={false}
+ * 個々の通知を描画するコンポーネント
  */
 export const Notification = ({ clientNotification }: Props) => {
+    const [isOpen, setIsOpen] = useState(false);
+
     return (
         <TimelineItem>
             <TimelineSeparator>

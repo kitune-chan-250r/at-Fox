@@ -4,9 +4,9 @@ import {
     AppBskyFeedDefs,
     AppBskyFeedGetPosts,
 } from "@atproto/api";
-import FeedEmbedImage from "./FeedEmbedImage";
+import FeedEmbedImage from "../FeedEmbedImage";
 import { makeStyles } from "@mui/styles";
-import BskyClient from "../utils/BskyClient";
+import BskyClient from "../../utils/BskyClient";
 import {
     Timeline,
     TimelineItem,
@@ -23,7 +23,7 @@ import {
 } from "@mui/material";
 import { timelineItemClasses } from "@mui/lab/TimelineItem";
 import Notification from "./Notification";
-import { NotificationContext } from "../contexts/NotificationProvider";
+import { NotificationContext } from "../../contexts/NotificationProvider";
 
 const useStyles = makeStyles({
     timelineContainer: {

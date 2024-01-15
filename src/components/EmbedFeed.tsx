@@ -1,16 +1,14 @@
 import { Fragment } from "react";
-import {
-    AppBskyEmbedRecord
-} from '@atproto/api';
-import { makeStyles } from '@mui/styles';
+import { AppBskyEmbedRecord, AppBskyFeedDefs } from "@atproto/api";
+import { makeStyles } from "@mui/styles";
 import { Avatar, Box, Grid, Stack } from "@mui/material";
 import FeedEmbedContent from "./FeedEmbedContent";
 import { Record } from "@atproto/api/dist/client/types/app/bsky/feed/post";
 
 const useStyles = makeStyles({
     feedContainer: {
-        width: '100%',
-        height: '100%',
+        width: "100%",
+        height: "100%",
         marginLeft: 10,
         marginTop: 10,
     },
@@ -18,10 +16,10 @@ const useStyles = makeStyles({
         // marginLeft: 10,
     },
     userName: {
-        fontWeight: 'bold',
+        fontWeight: "bold",
         fontSize: 14,
         // padding: 4,
-        paddingLeft: 4
+        paddingLeft: 4,
     },
 });
 
@@ -35,12 +33,10 @@ export const EmbedFeed = ({ view }: Props) => {
     const classes = useStyles();
     const record = view.record as AppBskyEmbedRecord.ViewRecord;
 
-    console.info(record.embeds);
-
     return (
         <Fragment>
-            <Box className={classes.feedContainer} style={{maxWidth: '95%'}}>
-                <Stack direction={'row'}>
+            <Box className={classes.feedContainer} style={{ maxWidth: "95%" }}>
+                <Stack direction={"row"}>
                     <Avatar
                         className={classes.avatar}
                         src={record.author?.avatar}
@@ -50,27 +46,28 @@ export const EmbedFeed = ({ view }: Props) => {
                     </Avatar>
                     <Box className={classes.userName}>
                         {record.author?.displayName}
-                        <a>
-                            @{record?.author?.handle}
-                        </a>
+                        <a>@{record?.author?.handle}</a>
                     </Box>
                 </Stack>
                 <Grid item xs={12}>
-                    {
-                        (record.value as Record)?.text !== undefined ?
-                        (record.value as Record).text.split('\n').map(
-                            // (e, index)=> <div key={index}>{e}<br/></div>
-                            (e, index)=> <div key={index}>{e}<br/></div>
-                        )
-                            : ''
-                    }
+                    {(record.value as Record)?.text !== undefined
+                        ? (record.value as Record).text.split("\n").map(
+                              // (e, index)=> <div key={index}>{e}<br/></div>
+                              (e, index) => (
+                                  <div key={index}>
+                                      {e}
+                                      <br />
+                                  </div>
+                              )
+                          )
+                        : ""}
                 </Grid>
-                {
-                    record.embeds?.map(e => <FeedEmbedContent content={e} />)
-                }
+                {record.embeds?.map((e) => (
+                    <FeedEmbedContent content={e} />
+                ))}
             </Box>
         </Fragment>
-    )
-}
+    );
+};
 
 export default EmbedFeed;
