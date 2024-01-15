@@ -34,7 +34,6 @@ const useStyles = makeStyles({
 });
 
 interface Props {
-    myProfile: ProfileResponse;
     middleMainContent: JSX.Element;
     middleSubContent?: JSX.Element; //?をつけるとオプショナルPropsになる
     refreshTimelineAndScrolleTop: () => void;

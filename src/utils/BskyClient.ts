@@ -54,6 +54,14 @@ export default class BskyClient {
     };
 
     /**
+     * 自身のセッション情報を返す
+     * @returns セッション情報
+     */
+    public getSession = (): AtpSessionData | undefined => {
+        return BskyClient._agent.session;
+    };
+
+    /**
      * 指定したfeedにlikeを付ける
      * @returns
      */

@@ -35,6 +35,7 @@ import { RoutePath } from "../routes/Router";
 import Notifications from "../components/Notification/Notifications";
 import { TimelineContext } from "../contexts/TimelineProvider";
 import { NotificationContext } from "../contexts/NotificationProvider";
+import { MyProfileContext } from "../contexts/MyProfileProvider";
 // import { BskyAgent, AtpSessionEvent, AtpSessionData } from '@atproto/api';
 
 export enum FeedAlgorithm {
@@ -55,11 +56,11 @@ interface Props {
 export const Home = ({ path }: Props) => {
     const [cookies, setCookie, removeCookie] = useCookies();
     const [isInit, setIsInit] = useState(false);
-    const [myProfile, setMyProfile] = useState({} as ProfileResponse);
     const navigate = useNavigate();
     const virtuoso = useRef<VirtuosoHandle>(null);
 
     const { refreshTimelineFeeds } = useContext(TimelineContext);
+    const { myProfile, updateMyProfile } = useContext(MyProfileContext);
 
     useEffect(() => {
         sessionManage();
@@ -74,19 +75,7 @@ export const Home = ({ path }: Props) => {
             // await agent.resumeSession(loginData);
             const bskyClient = BskyClient.getInstance();
             bskyClient.init(cookies?.service, cookies?.sessionData);
-
-            // 自分のプロフィールは持っておく
-            const loginData = cookies?.sessionData as AtpSessionData;
-            bskyClient
-                .getMyAvatar(loginData.handle)
-                .then((profile) => {
-                    setMyProfile(profile);
-                })
-                .catch((e) => {
-                    console.info(e);
-                    removeCookie("sessionData");
-                    navigate("/login");
-                });
+            updateMyProfile();
         }
 
         setIsInit(true);
@@ -108,13 +97,12 @@ export const Home = ({ path }: Props) => {
 
     return (
         <SideNavBar
-            myProfile={myProfile}
             middleMainContent={
                 <Fragment>
                     {path === RoutePath.HOME && (
                         <Timeline
                             virtuosoRef={virtuoso}
-                            myProfile={myProfile}
+                            // myProfile={myProfile}
                             isInit={isInit}
                             refreshTimelineAndScrolleTop={
                                 refreshTimelineAndScrolleTop

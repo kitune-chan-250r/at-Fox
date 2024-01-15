@@ -9,6 +9,7 @@ import { Router } from "./routes/Router";
 import { CookiesProvider } from "react-cookie";
 import { TimelineProvider } from "./contexts/TimelineProvider";
 import { NotificationProvider } from "./contexts/NotificationProvider";
+import { MyProfileProvider } from "./contexts/MyProfileProvider";
 
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
@@ -18,9 +19,11 @@ root.render(
         <CookiesProvider>
             <TimelineProvider>
                 <NotificationProvider>
-                    <BrowserRouter>
-                        <Router />
-                    </BrowserRouter>
+                    <MyProfileProvider>
+                        <BrowserRouter>
+                            <Router />
+                        </BrowserRouter>
+                    </MyProfileProvider>
                 </NotificationProvider>
             </TimelineProvider>
         </CookiesProvider>

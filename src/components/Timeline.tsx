@@ -28,6 +28,7 @@ import Feed from "./Feed";
 import BskyClient from "../utils/BskyClient";
 import PostFeed from "./PostFeed";
 import { TimelineContext } from "../contexts/TimelineProvider";
+import { MyProfileContext } from "../contexts/MyProfileProvider";
 
 // export enum FeedAlgorithm {
 //     ReverseChronological = 'reverse-chronological',
@@ -46,14 +47,14 @@ const useStyles = makeStyles({
 interface Props {
     virtuosoRef: any;
     isInit: boolean;
-    myProfile: ProfileResponse;
+    // myProfile: ProfileResponse;
     refreshTimelineAndScrolleTop: () => void;
 }
 
 export const Timeline = ({
     virtuosoRef,
     isInit,
-    myProfile,
+    // myProfile,
     refreshTimelineAndScrolleTop,
 }: Props) => {
     const [cookies, setCookie, removeCookie] = useCookies();
@@ -143,9 +144,6 @@ export const Timeline = ({
 
     const loginData = cookies.sessionData as AtpSessionData;
 
-    const List = styled.div`
-        width: 100vw;
-    `;
     return (
         <Fragment>
             {/* <div>
@@ -166,7 +164,6 @@ export const Timeline = ({
                 components={{
                     Header: () => (
                         <PostFeed
-                            myProfile={myProfile}
                             refreshTimelineFeeds={refreshTimelineAndScrolleTop}
                         />
                     ),
